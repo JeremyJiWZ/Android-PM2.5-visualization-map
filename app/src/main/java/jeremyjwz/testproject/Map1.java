@@ -27,6 +27,16 @@ public class Map1 extends AppCompatActivity {
         mMapView=(MapView)findViewById(R.id.map1);
         baiduMap=mMapView.getMap();
 
+        //改变地图位置参数
+        /*
+        MapStatus mapStatus = new MapStatus.Builder()
+                .target(new LatLng(29.806651,121.606983))
+                .zoom(18)
+                .build();
+        MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.newMapStatus(mapStatus);
+        baiduMap.setMapStatus(mapStatusUpdate);
+        */
+
         addGraphCircle();
 
     }
@@ -48,7 +58,8 @@ public class Map1 extends AppCompatActivity {
         //generate the color randomly
         for (int i=0;i<circleNum;i++){
             Integer color;
-            color=new Integer((int)Math.random()*255);
+            color=new Integer((int)(Math.random()*255*255*255));
+            color=color+0xff000000;
             circleColors.add(color);
         }
         //add circle to the map
@@ -58,9 +69,9 @@ public class Map1 extends AppCompatActivity {
                     "radius: " + 15);
 
             OverlayOptions aCircle = new CircleOptions()
-                    .radius(1400).center(circleCenters.get(i))
-                    .fillColor(0xff00ff00)
-                    .stroke(new Stroke(5,0xaa000000))
+                    .radius(500).center(circleCenters.get(i))
+                    .fillColor(circleColors.get(i))
+                    .stroke(new Stroke(5,circleColors.get(i)))
                     ;
             baiduMap.addOverlay(aCircle);
         }
