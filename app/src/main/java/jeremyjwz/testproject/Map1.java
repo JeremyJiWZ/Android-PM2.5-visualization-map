@@ -1,7 +1,9 @@
 package jeremyjwz.testproject;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Button;
 
 import com.baidu.mapapi.map.BaiduMap;
@@ -16,6 +18,15 @@ import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.model.LatLng;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +34,6 @@ public class Map1 extends AppCompatActivity {
 
     private MapView mMapView = null;
     private BaiduMap baiduMap = null;
-    private int circleNum = 100;
     private List<Marker> mMarkers = new ArrayList<Marker>();
 
     @Override
@@ -43,7 +53,7 @@ public class Map1 extends AppCompatActivity {
         MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.newMapStatus(mapStatus);
         baiduMap.setMapStatus(mapStatusUpdate);
 
-        addMarkerCicle();
+        new GetDataFromServer().execute("http://10.214.149.168:8888/server.php?action=checkpoints");
         baiduMap.setOnMarkerClickListener(new MarkerShowInfo());
     }
 
@@ -55,7 +65,8 @@ public class Map1 extends AppCompatActivity {
             Bundle info = marker.getExtraInfo();
             String location = info.getString("Location");
             String pm25 = info.getString("PM2.5");
-            button.setText("Location:\n"+location+"\n"
+            String checkpoint = info.getString("Checkpoint");
+            button.setText("Checkpoint:"+checkpoint+"\nLocation:\n"+location+"\n"
             +"PM2.5: "+pm25);
             button.setTextColor(0xff000000);
             InfoWindow.OnInfoWindowClickListener listener = new InfoWindow.OnInfoWindowClickListener() {
@@ -107,99 +118,156 @@ public class Map1 extends AppCompatActivity {
 //            baiduMap.addOverlay(aCircle);
 //        }
 //    }
-
-    public void addMarkerCicle(){
-        List<LatLng> circleCenters = new ArrayList<LatLng>();
-        List<Integer> pm25s = new ArrayList<Integer>();
+    public void drawMarkerCicle(LatLng latLng,String checkpoint,Double pm2_5){
         BitmapDescriptor pmG0 = BitmapDescriptorFactory.fromAsset("pmg0.png");
         BitmapDescriptor pmG1 = BitmapDescriptorFactory.fromAsset("pmg1.png");
         BitmapDescriptor pmG2 = BitmapDescriptorFactory.fromAsset("pmg2.png");
         BitmapDescriptor pmG3 = BitmapDescriptorFactory.fromAsset("pmg3.png");
         BitmapDescriptor pmG4 = BitmapDescriptorFactory.fromAsset("pmg4.png");
         BitmapDescriptor pmG5 = BitmapDescriptorFactory.fromAsset("pmg5.png");
-        //generate  the center randomly
-        for(int i = 0;i<circleNum;i++){
-            double lat,lgt;
-            lat=Math.random()*1.3+29.2;
-            lgt=Math.random()*1.15+119.35;
-            LatLng p1= new LatLng(lat,lgt);
-            circleCenters.add(p1);
-        }
-        //generate the PM2.5 randomly
-        for (int i =0;i<circleNum;i++){
-            int tmp = (int)(Math.random()*500);
-            pm25s.add(tmp);
-        }
-        //create them and add them to the map
-        for (int i =0;i<circleNum;i++){
-            //get a marker and add it to the map
-//            MarkerOptions item = new MarkerOptions()
-//                    .position(circleCenters.get(i))
-//                    .icon(pmG0)
-//                    .zIndex(0)
-//                    .perspective(false);
-            MarkerOptions item;
-            if(pm25s.get(i)<=50){
-                item = new MarkerOptions()
-                        .position(circleCenters.get(i))
-                        .icon(pmG0)
-                        .zIndex(0)
-                        .perspective(false);}
-            else if (pm25s.get(i)<=100){
-                item = new MarkerOptions()
-                        .position(circleCenters.get(i))
-                        .icon(pmG1)
-                        .zIndex(0)
-                        .perspective(false);}
-            else if (pm25s.get(i)<=150){
-                item = new MarkerOptions()
-                        .position(circleCenters.get(i))
-                        .icon(pmG2)
-                        .zIndex(0)
-                        .perspective(false);
-            }
-            else if (pm25s.get(i)<=300){
-                item = new MarkerOptions()
-                        .position(circleCenters.get(i))
-                        .icon(pmG3)
-                        .zIndex(0)
-                        .perspective(false);
-            }
-            else if (pm25s.get(i)<=500){
-                item = new MarkerOptions()
-                        .position(circleCenters.get(i))
-                        .icon(pmG4)
-                        .zIndex(0)
-                        .perspective(false);
-            }
-            else {
-                item = new MarkerOptions()
-                        .position(circleCenters.get(i))
-                        .icon(pmG5)
-                        .zIndex(0)
-                        .perspective(false);
-            }
-            Marker marker = (Marker) baiduMap.addOverlay(item);
 
-            //add info to the marker
-            String lat,lng;
-            lat = circleCenters.get(i).latitude+"";
-            lat = lat.substring(0,8);
-            lng = circleCenters.get(i).longitude+"";
-            lng = lng.substring(0,8);
-            Bundle info = new Bundle();
-            info.putString("Location","("+lat+","+lng+")");
-            info.putString("PM2.5",pm25s.get(i).toString());
-            marker.setExtraInfo(info);
-
-            mMarkers.add(marker);
-
+        MarkerOptions item;
+        if(pm2_5<=50){
+            item = new MarkerOptions()
+                    .position(latLng)
+                    .icon(pmG0)
+                    .zIndex(0)
+                    .perspective(false);}
+        else if (pm2_5<=100){
+            item = new MarkerOptions()
+                    .position(latLng)
+                    .icon(pmG1)
+                    .zIndex(0)
+                    .perspective(false);}
+        else if (pm2_5<=150){
+            item = new MarkerOptions()
+                    .position(latLng)
+                    .icon(pmG2)
+                    .zIndex(0)
+                    .perspective(false);
         }
+        else if (pm2_5<=300){
+            item = new MarkerOptions()
+                    .position(latLng)
+                    .icon(pmG3)
+                    .zIndex(0)
+                    .perspective(false);
+        }
+        else if (pm2_5<=500){
+            item = new MarkerOptions()
+                    .position(latLng)
+                    .icon(pmG4)
+                    .zIndex(0)
+                    .perspective(false);
+        }
+        else {
+            item = new MarkerOptions()
+                    .position(latLng)
+                    .icon(pmG5)
+                    .zIndex(0)
+                    .perspective(false);
+        }
+        Marker marker = (Marker) baiduMap.addOverlay(item);
+
+        //add info to the marker
+        String lat,lng;
+        lat = latLng.latitude+"";
+        lat = lat.substring(0,8);
+        lng = latLng.longitude+"";
+        lng = lng.substring(0,8);
+        Bundle info = new Bundle();
+        info.putString("Location","("+lat+","+lng+")");
+        info.putString("PM2.5",pm2_5.toString());
+        info.putString("Checkpoint",checkpoint);
+        marker.setExtraInfo(info);
+        mMarkers.add(marker);
 
     }
 
+    private InputStream OpenHttpConnection(String urlString) throws IOException {
+        InputStream in =null;
+        int response =-1;
+        URL url = new URL(urlString);
+        HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
+        try{
+            httpURLConnection.setAllowUserInteraction(false);
+            httpURLConnection.setRequestMethod("GET");
+            httpURLConnection.setInstanceFollowRedirects(true);
+            httpURLConnection.connect();
+            response = httpURLConnection.getResponseCode();
+            if(response==HttpURLConnection.HTTP_OK)
+                in = httpURLConnection.getInputStream();
+        }
+        catch (Exception ex){
+            Log.e("Networking", ex.getLocalizedMessage());
+            throw new IOException("Error connecting");
+        }
+        return in;
+    }
+    private String DownloadText(String URL){
+        int BUFFER_SIZE=2000;
+        InputStream in =null;
+        try{
+            in = OpenHttpConnection(URL);
+        }
+        catch (IOException ex){
+            Log.e("Networking", ex.getLocalizedMessage());
+            return "";
+        }
+        InputStreamReader isr = new InputStreamReader(in);
+        int charRead;
+        String str="";
+        char[] inputBuffer = new char[BUFFER_SIZE];
+        try{
+            while((charRead=isr.read(inputBuffer))>0){
+                String readString = String.copyValueOf(inputBuffer,0,charRead);
+                str+=readString;
+                inputBuffer=new char[BUFFER_SIZE];
 
+            }
+        }catch (IOException ex){
+            Log.e("Networking", ex.getLocalizedMessage());
+            return "";
+        }
+        return str;
+    }
+    private class GetDataFromServer extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... urls) {
+            return DownloadText(urls[0]);
+        }
 
+        @Override
+        protected void onPostExecute(String result) {
+            Log.e("Error", "downloading..:" + result);
+            try {
+                JSONObject json = new JSONObject(result);
+                Log.e("Map2", "" + json.getBoolean("status"));
+                if (json.getBoolean("status")) {
+                    drawMarkers(json.getJSONArray("data"));
+                } else {
+                    Log.e("Error", "status false");
+                }
+            } catch (JSONException e) {
+                Log.e("Map2", e.getMessage());
+            }
+        }
+    }
+    private void drawMarkers(JSONArray jsonArray) throws JSONException{
+        JSONObject json;
+        LatLng latLng;
+        Double pm2_5;
+        String checkpoint;
+        for (int i = 0; i < jsonArray.length(); ++i) {
+            json = jsonArray.getJSONObject(i);
+            Double lng = new Double(json.getString("longitude"));
+            Double lat = new Double(json.getString("latitude"));
+            latLng = new LatLng(lat,lng);
+            pm2_5 = new Double(json.getString("pm2_5"));
+            checkpoint = json.getString("checkpoint");
+            drawMarkerCicle(latLng,checkpoint,pm2_5);
+        }
+    }
     /**
      * initialize the method
      */

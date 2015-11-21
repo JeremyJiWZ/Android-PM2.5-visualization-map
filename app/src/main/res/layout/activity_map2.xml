@@ -6,7 +6,23 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="jeremyjwz.testproject.Map2">
 
-    <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:background="#ff00ff"
+        android:layout_centerVertical="true"
+        android:text="test Http"
+        android:textSize="30sp"
+        android:padding="3dp"
+        android:id="@+id/buttonMap2"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Http information will be shown here"
+        android:layout_centerHorizontal="true"
+        android:textSize="24sp"
+        android:textColor="#000000"
+        android:id="@+id/textViewMap2"/>
 
 </RelativeLayout>
