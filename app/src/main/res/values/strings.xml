@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TestProject</string>
+    <string name="app_name">污染可视化</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
