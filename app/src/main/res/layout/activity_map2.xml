@@ -27,6 +27,11 @@
     <lecho.lib.hellocharts.view.LineChartView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/char1"/>
+        android:id="@+id/lineChart1"/>
+    <lecho.lib.hellocharts.view.ColumnChartView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/columnChart"/>
+
 
 </RelativeLayout>

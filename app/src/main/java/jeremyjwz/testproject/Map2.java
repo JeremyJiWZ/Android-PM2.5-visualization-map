@@ -1,5 +1,6 @@
 package jeremyjwz.testproject;
 
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -18,8 +19,34 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import lecho.lib.hellocharts.gesture.ZoomType;
+import lecho.lib.hellocharts.model.Axis;
+import lecho.lib.hellocharts.model.AxisValue;
+import lecho.lib.hellocharts.model.Column;
+import lecho.lib.hellocharts.model.ColumnChartData;
+import lecho.lib.hellocharts.model.Line;
+import lecho.lib.hellocharts.model.LineChartData;
+import lecho.lib.hellocharts.model.PointValue;
+import lecho.lib.hellocharts.model.SubcolumnValue;
+import lecho.lib.hellocharts.view.ColumnChartView;
+import lecho.lib.hellocharts.view.LineChartView;
 
 public class Map2 extends AppCompatActivity {
+
+    //variables for line chart test
+    private LineChartView chart;
+    private LineChartData data = new LineChartData();
+    private List<Line> lines = new ArrayList<Line>();
+
+    private ColumnChartView columnChartView;
+    private ColumnChartData columnChartData = new ColumnChartData();
+    private List<Column> columns = new ArrayList<Column>();
+
+    private View thisView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +54,71 @@ public class Map2 extends AppCompatActivity {
         setContentView(R.layout.activity_map2);
         Button button = (Button)findViewById(R.id.buttonMap2);
         button.setOnClickListener(new GetInfoListener());
+        lineCharInit();
     }
+
+    //line charts test function
+    private void lineCharInit(){
+        //在xml中定义的视图
+        chart=(LineChartView)findViewById(R.id.lineChart1);
+        columnChartView = (ColumnChartView)findViewById(R.id.columnChart);
+
+        //column
+        Column column = new Column();
+        int randomData;
+
+        //给linechart设置初始值
+        ArrayList<PointValue> pointValues = new ArrayList<PointValue>();
+        ArrayList<AxisValue> axisValues = new ArrayList<AxisValue>();
+        ArrayList<SubcolumnValue> subcolumnValues = new ArrayList<SubcolumnValue>();
+        for (int i=0;i<10;++i){
+            randomData = new Random().nextInt(10);
+            pointValues.add(new PointValue(i, randomData));
+            axisValues.add(new AxisValue(i).setLabel(""+(i+1)));
+            subcolumnValues.add(new SubcolumnValue(i,randomData));
+        }
+        Line line = new Line(pointValues).setColor(Color.BLUE).setCubic(false);
+        lines.add(line);
+        column.setValues(subcolumnValues);
+        columns.add(column);
+
+        data.setLines(lines);
+        columnChartData.setColumns(columns);
+
+        //设置坐标轴
+        Axis axisX = new Axis(); //X Axis
+        axisX.setHasTiltedLabels(true);
+        axisX.setTextColor(Color.CYAN);
+        axisX.setName("日期");
+        axisX.setMaxLabelChars(10);
+        axisX.setValues(axisValues);
+        data.setAxisXBottom(axisX);
+
+        Axis axisY = new Axis();//Y axis
+        axisY.setHasTiltedLabels(true);
+        axisY.setTextColor(Color.CYAN);
+        axisY.setName("PM2.5");
+        axisY.setMaxLabelChars(5);
+        data.setAxisYLeft(axisY);
+
+        chart.setInteractive(true);
+        chart.setZoomType(ZoomType.HORIZONTAL);
+        chart.setLineChartData(data);
+        chart.setVisibility(View.VISIBLE);
+
+//        columnChartView.setInteractive(true);
+//        columnChartView.setZoomType(ZoomType.HORIZONTAL);
+//        columnChartView.setColumnChartData(columnChartData);
+//        columnChartView.setVisibility(View.VISIBLE);
+    }
+
+
+
+
+
+
+
+
     class GetInfoListener implements Button.OnClickListener{
         @Override
         public void onClick(View v){
