@@ -53,8 +53,8 @@ public class Map1 extends AppCompatActivity {
         MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.newMapStatus(mapStatus);
         baiduMap.setMapStatus(mapStatusUpdate);
 
-//        new GetDataFromServer().execute("http://10.214.149.168:8888/server.php?action=checkpoints");
-//        baiduMap.setOnMarkerClickListener(new MarkerShowInfo());
+        new GetDataFromServer().execute("http://10.214.149.168:8888/server.php?action=checkpoints");
+        baiduMap.setOnMarkerClickListener(new MarkerShowInfo());
     }
 
     class MarkerShowInfo implements BaiduMap.OnMarkerClickListener{
@@ -239,7 +239,7 @@ public class Map1 extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            Log.e("Error", "downloading..:" + result);
+//            Log.e("Error", "downloading..:" + result);
             try {
                 JSONObject json = new JSONObject(result);
                 Log.e("Map2", "" + json.getBoolean("status"));
