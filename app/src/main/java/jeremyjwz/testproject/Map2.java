@@ -61,7 +61,7 @@ public class Map2 extends AppCompatActivity {
     private void lineCharInit(){
         //在xml中定义的视图
         chart=(LineChartView)findViewById(R.id.lineChart1);
-        columnChartView = (ColumnChartView)findViewById(R.id.columnChart);
+//        columnChartView = (ColumnChartView)findViewById(R.id.columnChart);
 
         //column
         Column column = new Column();
