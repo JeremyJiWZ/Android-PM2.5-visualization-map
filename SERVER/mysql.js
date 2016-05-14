@@ -1,32 +1,24 @@
 var mysql = require('mysql');  
       
-var DATABASE = 'airquality';
 var AQnow = 'aqnow';  
 var TABLE = 'airquality';  
   
 //创建连接  
 var client = mysql.createConnection({  
+  host : 'localhost',
   user: 'root',  
-  password: 'jiwenzhong',  
+  password: 'jiwenzhong',
+  database: 'airquality'  
 });  
 
 client.connect();
-client.query("use " + TEST_DATABASE);
 
-client.query(  
-  'SELECT * FROM '+TEST_TABLE,  
-  function selectCb(err, results, fields) {  
-    if (err) {  
-      throw err;  
-    }  
-      
-      if(results)
-      {
-          for(var i = 0; i < results.length; i++)
-          {
-              console.log("%d\t%s\t%s", results[i].id, results[i].name, results[i].age);
-          }
-      }    
-    client.end();  
-  }  
-);
+client.query('select * from '+TABLE, function(err, rows, fields) {
+  if (err) throw err;
+  console.log(rows.length);
+  for (var i = 0; i < rows.length; i++) {
+    console.log(rows[i].location, rows[i].quality, rows[i].pm25); 
+  }
+});
+
+client.end();

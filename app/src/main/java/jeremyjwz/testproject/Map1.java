@@ -53,7 +53,7 @@ public class Map1 extends AppCompatActivity {
         MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.newMapStatus(mapStatus);
         baiduMap.setMapStatus(mapStatusUpdate);
 
-        new GetDataFromServer().execute("http://10.214.149.168:8888/server.php?action=checkpoints");
+        new GetDataFromServer().execute("http://10.180.65.232:8000/");
         baiduMap.setOnMarkerClickListener(new MarkerShowInfo());
     }
 
@@ -260,10 +260,10 @@ public class Map1 extends AppCompatActivity {
         String checkpoint;
         for (int i = 0; i < jsonArray.length(); ++i) {
             json = jsonArray.getJSONObject(i);
-            Double lng = new Double(json.getString("longitude"));
-            Double lat = new Double(json.getString("latitude"));
+            Double lng = new Double(json.getString("long"));
+            Double lat = new Double(json.getString("lat"));
             latLng = new LatLng(lat,lng);
-            pm2_5 = new Double(json.getString("pm2_5"));
+            pm2_5 = new Double(json.getString("pm25"));
             checkpoint = json.getString("checkpoint");
             drawMarkerCicle(latLng,checkpoint,pm2_5);
         }
