@@ -22,7 +22,7 @@ function constructJson( input, result){
 		if(checkpointsMap.get(checkName)) lat = checkpointsMap.get(checkName)['lat'];
 		if(checkpointsMap.get(checkName)) long = checkpointsMap.get(checkName)['long'];
 		result['data'][i]={
-		'checkpoints' : checkName,
+		'checkpoint' : checkName,
 		'lat'  : lat,
 		'long' : long,
 		'pm25' : input[i].pm25
