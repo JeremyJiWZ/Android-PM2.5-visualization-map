@@ -146,7 +146,7 @@ public class Map1 extends AppCompatActivity {
                     .zIndex(0)
                     .perspective(false);
         }
-        else if (pm2_5<=300){
+        else if (pm2_5<=200){
             item = new MarkerOptions()
                     .position(latLng)
                     .icon(pmG3)
@@ -260,10 +260,15 @@ public class Map1 extends AppCompatActivity {
         String checkpoint;
         for (int i = 0; i < jsonArray.length(); ++i) {
             json = jsonArray.getJSONObject(i);
+            String pm25orNone = json.getString("pm25").trim();
+            if (pm25orNone.contains("—")) {
+                continue;
+            }
+
             Double lng = new Double(json.getString("long"));
             Double lat = new Double(json.getString("lat"));
             latLng = new LatLng(lat,lng);
-            pm2_5 = new Double(json.getString("pm25"));
+            pm2_5 = new Double(json.getString("pm25").trim());
             checkpoint = json.getString("checkpoint");
             drawMarkerCicle(latLng,checkpoint,pm2_5);
         }
