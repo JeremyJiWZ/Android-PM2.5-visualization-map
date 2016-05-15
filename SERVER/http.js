@@ -79,9 +79,10 @@ console.log("server listening...");
 
 //handle the http request
 server.on("request",function(request,response){
-	console.log(request.headers['host']);
-	
-	
+
+	console.log(request.connection.remoteAddress);
+	// console.log(request.connection);
+
 	response.writeHead(200);
 	
 	response.write(JSON.stringify(sqlResponseHttp));
