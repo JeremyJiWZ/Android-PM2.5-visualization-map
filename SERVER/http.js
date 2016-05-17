@@ -1,5 +1,6 @@
 var http = require('http');
-var mysql = require('mysql');  
+var mysql = require('mysql'); 
+var url = require('url'); 
       
 var AQnow = 'aqnow';  
 var TABLE = 'airquality';
@@ -89,3 +90,5 @@ server.on("request",function(request,response){
 
 	response.end();
 });
+
+
