@@ -72,7 +72,7 @@ public class MapFragment extends android.support.v4.app.Fragment {
         MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.newMapStatus(mapStatus);
         baiduMap.setMapStatus(mapStatusUpdate);
 
-        new GetDataFromServer().execute("http://10.180.76.113:8000/");
+        new GetDataFromServer().execute("http://10.180.64.30:8000/");
         baiduMap.setOnMarkerClickListener(new MarkerShowInfo());
 
         return view;

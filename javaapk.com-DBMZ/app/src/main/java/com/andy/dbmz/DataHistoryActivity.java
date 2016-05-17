@@ -67,13 +67,14 @@ public class DataHistoryActivity extends AppCompatActivity {
         //给linechart设置初始值
         ArrayList<PointValue> pointValues = new ArrayList<PointValue>();
         ArrayList<AxisValue> axisValues = new ArrayList<AxisValue>();
-        for (int i=0;i<10;++i){
+        for (int i=0;i<pm25s.size();++i){
             pm25 = pm25s.get(i);
             date = dates.get(i);
-            pointValues.add(new PointValue(i, pm25));
+            pointValues.add(new PointValue(i, pm25).setLabel(pm25+""));
             axisValues.add(new AxisValue(i).setLabel(date));
         }
         Line line = new Line(pointValues).setColor(Color.BLUE).setCubic(false);
+        line.setHasLabelsOnlyForSelected(true);
         lines.add(line);
 
         data.setLines(lines);
@@ -81,17 +82,17 @@ public class DataHistoryActivity extends AppCompatActivity {
         //设置坐标轴
         Axis axisX = new Axis(); //X Axis
         axisX.setHasTiltedLabels(true);
-        axisX.setTextColor(Color.CYAN);
+        axisX.setTextColor(Color.BLACK);
         axisX.setName("日期");
-        axisX.setMaxLabelChars(10);
+        axisX.setMaxLabelChars(7);
         axisX.setValues(axisValues);
         data.setAxisXBottom(axisX);
 
         Axis axisY = new Axis();//Y axis
         axisY.setHasTiltedLabels(true);
-        axisY.setTextColor(Color.CYAN);
+        axisY.setTextColor(Color.BLACK);
         axisY.setName("PM2.5");
-        axisY.setMaxLabelChars(5);
+        axisY.setMaxLabelChars(7);
         data.setAxisYLeft(axisY);
 
         chart.setInteractive(true);
@@ -179,9 +180,11 @@ public class DataHistoryActivity extends AppCompatActivity {
         for (int i=0;i<jsonData.length();i++){
             json = jsonData.getJSONObject(i);
 
-            pm2_5 = new Integer(json.getString("pm25"));
+            if (json.getString("pm25").contains("-"))
+                continue;
+            pm2_5 = new Integer(json.getString("pm25").trim());
             date = json.getString("time");
-            date = date.substring(5, 9);
+            date = date.substring(5, 10);
             pm25s.add(pm2_5);
             dates.add(date);
         }
