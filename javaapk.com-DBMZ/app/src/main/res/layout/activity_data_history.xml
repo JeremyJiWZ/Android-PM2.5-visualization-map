@@ -11,24 +11,40 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.DBMZ.AppBarOverlay">
+        android:theme="@style/Theme.DBMZ.AppBarOverlay"
+        android:id="@+id/view">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <android.support.v7.widget.AppCompatTextView
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="#b4b4b6"
-            app:popupTheme="@style/Theme.DBMZ.PopupOverlay"/>
+            android:layout_height="match_parent"
+            android:text="历史数据"
+            android:textAlignment="center"
+            android:textSize="32sp"
+            android:autoText="false"
+            android:gravity="center"
+            />
+
 
     </android.support.design.widget.AppBarLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="checkpoint"
+        android:textSize="28sp"
+        android:gravity="center"
+        android:id="@+id/textView"
+        android:layout_below="@+id/view"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="35dp"/>
 
     <lecho.lib.hellocharts.view.LineChartView
         android:layout_width="wrap_content"
         android:layout_height="250dp"
         android:id="@+id/lineChart"
-        android:layout_marginTop="100dp"
-        android:layout_centerHorizontal="true"
-        />
+        android:layout_below="@+id/textView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
 
 
 </RelativeLayout>

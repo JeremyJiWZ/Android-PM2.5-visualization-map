@@ -72,7 +72,7 @@ public class MapFragment extends android.support.v4.app.Fragment {
         MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.newMapStatus(mapStatus);
         baiduMap.setMapStatus(mapStatusUpdate);
 
-        new GetDataFromServer().execute("http://10.180.79.215:8000/");
+        new GetDataFromServer().execute("http://10.180.76.113:8000/");
         baiduMap.setOnMarkerClickListener(new MarkerShowInfo());
 
         return view;
@@ -102,18 +102,23 @@ public class MapFragment extends android.support.v4.app.Fragment {
             Button button = new Button(getActivity().getApplicationContext());
             button.setBackgroundResource(R.drawable.popup);
             Bundle info = marker.getExtraInfo();
-            String location = info.getString("Location");
             String pm25 = info.getString("PM2.5");
-            String checkpoint = info.getString("Checkpoint");
-            button.setText("Checkpoint:"+checkpoint+"\nLocation:\n"+location+"\n"
+            final String checkpoint = info.getString("Checkpoint");
+            button.setText("监测站:"+checkpoint+"\n"
                     +"PM2.5: "+pm25);
             button.setTextColor(0xff000000);
             InfoWindow.OnInfoWindowClickListener listener = new InfoWindow.OnInfoWindowClickListener() {
                 @Override
                 public void onInfoWindowClick() {
                     baiduMap.hideInfoWindow();
+
+                    Bundle extraInfos = new Bundle();
+                    extraInfos.putString("checkpoint", checkpoint);
+
                     Intent intent =new Intent();
+                    intent.putExtras(extraInfos);
                     intent.setClass(getActivity(),DataHistoryActivity.class);
+
                     startActivity(intent);
                 }
             };
